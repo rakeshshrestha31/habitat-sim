@@ -687,11 +687,21 @@ static float frand() {
 }
 
 vec3f esp::nav::PathFinder::getRandomNavigablePoint() {
+  assert(navQuery_);
   dtPolyRef ref;
   vec3f pt;
-  dtStatus status = navQuery_->findRandomPoint(filter_, frand, &ref, pt.data());
-  if (!dtStatusSucceed(status)) {
-    LOG(ERROR) << "Failed to getRandomNavigablePoint";
+  LOG(INFO) << "Running getRandomNavigablePoint";
+  if (!navQuery_)
+  {
+    LOG(ERROR) << "navQuery not initialized";
+    pt << 0, 0, 0;
+  }
+  else
+  {
+    dtStatus status = navQuery_->findRandomPoint(filter_, frand, &ref, pt.data());
+    if (!dtStatusSucceed(status)) {
+      LOG(ERROR) << "Failed to getRandomNavigablePoint";
+    }
   }
   return pt;
 }
