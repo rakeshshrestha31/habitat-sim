@@ -11,6 +11,7 @@
 
 #include "Drawable.h"
 #include "esp/io/io.h"
+#include <iomanip>
 
 using namespace Magnum;
 using namespace Math::Literals;
@@ -87,7 +88,7 @@ Viewer::Viewer(const Arguments& arguments)
   }
 
   // connect controls to navmesh if loaded
-  if (pathfinder_->isLoaded()) {
+  if (false) { // pathfinder_->isLoaded()) {
     controls_.setMoveFilterFunction([&](const vec3f& start, const vec3f& end) {
       vec3f currentPosition = pathfinder_->tryStep(start, end);
       LOG(INFO) << "position=" << currentPosition.transpose() << " rotation="
@@ -270,6 +271,18 @@ void Viewer::keyPressEvent(KeyEvent& event) {
       break;
   }
   renderCamera_->setTransformation(cameraNode_->getAbsoluteTransformation());
+  
+  auto transformation = cameraNode_->getAbsoluteTransformation();
+  auto quaternion = quatf(
+    Eigen::Matrix3f(transformation.topLeftCorner<3,3>())
+  );
+  std::cout
+    << std::fixed
+    << std::setprecision(2)
+    << "default rotation: " << cameraNode_->getRotation().toRotationMatrix().eulerAngles(1, 0, 2).transpose() * 180 / M_PI << std::endl
+    << "matrix based rotation: " << quaternion.toRotationMatrix().eulerAngles(1, 0, 2).transpose() * 180 / M_PI << std::endl
+    << std::endl;
+
   redraw();
 }
 
