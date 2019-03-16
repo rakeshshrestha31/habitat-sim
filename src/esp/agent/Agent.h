@@ -23,6 +23,8 @@ struct AgentState {
   // interop, replace with quatf when we have custom pybind11 type conversion
   // for quaternions
   vec4f rotation;
+  // full transfomation
+  mat4f transformation;
   vec3f velocity;
   vec3f angularVelocity;
   vec3f force;

@@ -525,6 +525,7 @@ PYBIND11_MODULE(habitat_sim_bindings, m) {
       .def(py::init(&AgentState::create<>))
       .def_readwrite("position", &AgentState::position)
       .def_readwrite("rotation", &AgentState::rotation)
+      .def_readwrite("transformation", &AgentState::transformation)
       .def_readwrite("velocity", &AgentState::velocity)
       .def_readwrite("angular_velocity", &AgentState::angularVelocity)
       .def_readwrite("force", &AgentState::force)

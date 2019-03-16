@@ -86,6 +86,7 @@ void Agent::getState(AgentState::ptr state) const {
   // TODO this should be done less hackishly
   state->position = getAbsolutePosition();
   state->rotation = getRotation().coeffs();
+  state->transformation = getAbsoluteTransformation();
   // TODO other state members when implemented
 }
 
