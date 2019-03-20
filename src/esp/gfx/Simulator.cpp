@@ -42,7 +42,10 @@ Simulator::~Simulator() {
 }
 
 void Simulator::sampleRandomAgentState(agent::AgentState::ptr agentState) {
+  assert(pathfinder_);
+  LOG(INFO) << "Getting Random position";
   agentState->position = pathfinder_->getRandomNavigablePoint();
+  LOG(INFO) << "Random position: " << agentState->position.transpose();
   const float randomAngleRad = random_.uniform_float_01() * M_PI;
   quatf rotation(Eigen::AngleAxisf(randomAngleRad, vec3f::UnitY()));
   agentState->rotation = rotation.coeffs();
@@ -137,17 +140,23 @@ void Simulator::reconfigure(const SimulatorConfiguration& cfg) {
   auto& agentParentNode = sceneGraph.getRootNode();
   addAgent(agentConfig, agentParentNode);
   ASSERT(0 <= cfg.defaultAgentId && cfg.defaultAgentId < agents_.size());
+  LOG(INFO) << "Default agent: " << cfg.defaultAgentId
+            << " Num agents: "    << agents_.size();
 
   // create pathfinder and load navmesh if available
   if (pathfinder_) {
     pathfinder_.reset();
   }
   pathfinder_ = nav::PathFinder::create();
+  if (!pathfinder_) {
+    LOG(ERROR) << "could not create PathFinder pointer";
+    exit(1);
+  }
   std::string navmeshFilename = io::changeExtension(sceneFilename, ".navmesh");
-  if (cfg.scene.filepaths.count("navmesh")) {
+  if (false) { // (cfg.scene.filepaths.count("navmesh")) {
     navmeshFilename = cfg.scene.filepaths.at("navmesh");
   }
-  if (io::exists(navmeshFilename)) {
+  if (false) { // (io::exists(navmeshFilename)) {
     LOG(INFO) << "Loading navmesh from " << navmeshFilename;
     pathfinder_->loadNavMesh(navmeshFilename);
     LOG(INFO) << "Loaded.";
@@ -205,7 +214,9 @@ void Simulator::reconfigure(const SimulatorConfiguration& cfg) {
   }
 
   // now reset to sample agent state
+  LOG(INFO) << "Resetting agents";
   reset();
+  LOG(INFO) << "Reset done.";
 }
 
 void Simulator::reset() {
@@ -213,6 +224,7 @@ void Simulator::reset() {
     auto& agent = agents_[iAgent];
     agent::AgentState::ptr state = agent::AgentState::create();
     sampleRandomAgentState(state);
+    LOG(INFO) << "Resetting agent " << iAgent;
     agent->setState(*state);
     LOG(INFO) << "Reset agent i=" << iAgent
               << " position=" << state->position.transpose()
