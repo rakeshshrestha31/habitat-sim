@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <limits>
 
 #include <sophus/so3.hpp>
 
@@ -73,6 +74,13 @@ bool Mp3dInstanceMeshData::loadMp3dPLY(const std::string& plyFile) {
   cpu_vbo_.reserve(nVertex);
   cpu_ibo_.clear();
   cpu_ibo_.reserve(nFace);
+  
+  bounding_box_coords_[0][0] = 
+    bounding_box_coords_[0][1] = 
+    bounding_box_coords_[0][2] = std::numeric_limits<float>::max();
+  bounding_box_coords_[1][0] = 
+    bounding_box_coords_[1][1] = 
+    bounding_box_coords_[1][2] = std::numeric_limits<float>::lowest();
 
   for (int i = 0; i < nVertex; ++i) {
     vec4f position;
@@ -86,6 +94,25 @@ bool Mp3dInstanceMeshData::loadMp3dPLY(const std::string& plyFile) {
     ifs.read(reinterpret_cast<char*>(rgb.data()), 3 * sizeof(uint8_t));
     cpu_vbo_.emplace_back(position);
     cpu_cbo_.emplace_back(rgb);
+
+    // bounding box computation
+    bounding_box_coords_[0][0] = std::min(bounding_box_coords_[0][0], position(0));
+    bounding_box_coords_[0][1] = std::min(bounding_box_coords_[0][1], position(1));
+    bounding_box_coords_[0][2] = std::min(bounding_box_coords_[0][2], position(2));
+    
+    bounding_box_coords_[1][0] = std::max(bounding_box_coords_[1][0], position(0));
+    bounding_box_coords_[1][1] = std::max(bounding_box_coords_[1][1], position(1));
+    bounding_box_coords_[1][2] = std::max(bounding_box_coords_[1][2], position(2));
+    
+    if (i == 0) {
+        LOG(INFO) << "Bounding box coords: ("
+                  << bounding_box_coords_[0][0] << ", " 
+                  << bounding_box_coords_[0][1] << ", " 
+                  << bounding_box_coords_[0][2] << "), (" 
+                  << bounding_box_coords_[1][0] << ", " 
+                  << bounding_box_coords_[1][1] << ", " 
+                  << bounding_box_coords_[1][2] << ") ";
+    }
   }
 
   for (int i = 0; i < nFace; ++i) {

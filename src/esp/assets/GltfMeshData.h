@@ -34,9 +34,14 @@ class GltfMeshData : public BaseMesh {
   }
 
   virtual Magnum::GL::Mesh* getMagnumGLMesh() override;
-
+  std::array< std::array<float, 3>, 2> getBoundingBoxCoords() {
+    return bounding_box_coords_;
+  }
  protected:
   Corrade::Containers::Optional<Magnum::Trade::MeshData3D> meshData_;
+
+  std::array< std::array<float, 3>, 2> bounding_box_coords_;
+
   // we will have to use smart pointer here since each item within the structure
   // (e.g., Magnum::GL::Mesh) does NOT have copy constructor
   std::unique_ptr<RenderingBuffer> renderingBuffer_ = nullptr;

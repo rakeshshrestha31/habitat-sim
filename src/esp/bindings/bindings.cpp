@@ -651,5 +651,6 @@ PYBIND11_MODULE(habitat_sim_bindings, m) {
            R"()", "agent_state"_a)
       .def("saveFrame", &Simulator::saveFrame, R"()", "filename"_a)
       .def("make_action_pathfinder", &Simulator::makeActionPathfinder,
-           "agent_id"_a = 0);
+           "agent_id"_a = 0)
+      .def("get_scene_bounding_box_coords", &Simulator:: getSceneBoundingBoxCoords);
 }

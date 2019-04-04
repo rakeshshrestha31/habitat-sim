@@ -50,6 +50,10 @@ class Mp3dInstanceMeshData : public BaseMesh {
   RenderingBuffer* getRenderingBuffer() { return renderingBuffer_.get(); }
 
   virtual Magnum::GL::Mesh* getMagnumGLMesh() override;
+  
+  std::array< std::array<float, 3>, 2> getBoundingBoxCoords() {
+    bounding_box_coords_;
+  }
 
  protected:
   std::vector<vec4f> cpu_vbo_;
@@ -58,6 +62,8 @@ class Mp3dInstanceMeshData : public BaseMesh {
   std::vector<int> materialIds_;
   std::vector<int> segmentIds_;
   std::vector<int> categoryIds_;
+
+  std::array< std::array<float, 3>, 2> bounding_box_coords_;
 
   // ==== rendering ====
   std::unique_ptr<RenderingBuffer> renderingBuffer_ = nullptr;

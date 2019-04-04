@@ -58,6 +58,12 @@ class ResourceManager {
                  DrawableGroup* drawables = nullptr);
 
   inline void compressTextures(bool newVal) { compressTextures_ = newVal; };
+  
+  /** 
+   * get scene bounding box (OBB)
+   * @todo handle all mesh types (currently only MP3D)
+   */
+  std::array< std::array<float, 3>, 2> getSceneBoundingBoxCoords();
 
  protected:
   //! Load textures from importer into assets, and update metaData

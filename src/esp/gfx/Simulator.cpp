@@ -133,6 +133,15 @@ void Simulator::reconfigure(const SimulatorConfiguration& cfg) {
     // Pass the error to the python through pybind11 allowing graceful exit
     throw std::invalid_argument("Cannot load: " + sceneFilename);
   }
+    
+  auto bounding_box_coords = getSceneBoundingBoxCoords();
+  LOG(INFO) << "Bounding box coords: ("
+            << bounding_box_coords[0][0] << ", " 
+            << bounding_box_coords[0][1] << ", " 
+            << bounding_box_coords[0][2] << "), (" 
+            << bounding_box_coords[1][0] << ", " 
+            << bounding_box_coords[1][1] << ", " 
+            << bounding_box_coords[1][2] << ") ";
 
   // create agents, sensors
   agents_.clear();
@@ -153,10 +162,10 @@ void Simulator::reconfigure(const SimulatorConfiguration& cfg) {
     exit(1);
   }
   std::string navmeshFilename = io::changeExtension(sceneFilename, ".navmesh");
-  if (false) { // (cfg.scene.filepaths.count("navmesh")) {
+  if (cfg.scene.filepaths.count("navmesh")) { // (false) { //
     navmeshFilename = cfg.scene.filepaths.at("navmesh");
   }
-  if (false) { // (io::exists(navmeshFilename)) {
+  if (io::exists(navmeshFilename)) { // (false) { //
     LOG(INFO) << "Loading navmesh from " << navmeshFilename;
     pathfinder_->loadNavMesh(navmeshFilename);
     LOG(INFO) << "Loaded.";

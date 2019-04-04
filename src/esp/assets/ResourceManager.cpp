@@ -3,6 +3,8 @@
 // LICENSE file in the root directory of this source tree.
 
 #include <functional>
+#include <limits>
+#include <iostream>
 
 #include <Corrade/PluginManager/Manager.h>
 #include <Corrade/Utility/String.h>
@@ -41,7 +43,7 @@ bool ResourceManager::loadScene(const AssetInfo& info,
     LOG(ERROR) << "Cannot load from file " << info.filepath;
     return false;
   }
-
+  std::cout << "asset type: " << (int)info.type << std::endl;
   if (info.type == AssetType::FRL_INSTANCE_MESH) {
     return loadInstanceMeshData(info, parent, drawables);
   } else if (info.type == AssetType::MP3D_INSTANCE_MESH) {
@@ -57,6 +59,52 @@ bool ResourceManager::loadScene(const AssetInfo& info,
     return loadGeneralMeshData(info, parent, drawables);
   }
 }
+
+std::array< std::array<float, 3>, 2> ResourceManager::getSceneBoundingBoxCoords() {
+  std::array< std::array<float, 3>, 2> bounding_box_coords;
+  bounding_box_coords[0][0] = 
+    bounding_box_coords[0][1] = 
+    bounding_box_coords[0][2] = std::numeric_limits<float>::max();
+  bounding_box_coords[1][0] = 
+    bounding_box_coords[1][1] = 
+    bounding_box_coords[1][2] = std::numeric_limits<float>::lowest();
+  
+  int valid_meshes = 0;
+  for (const auto &mesh: meshes_) {
+    // TODO: compute bounding boxes for other mesh types as well
+    auto *mp3d_mesh = dynamic_cast<Mp3dInstanceMeshData*>(mesh.get());
+    if (mp3d_mesh) {
+      valid_meshes++;
+      auto mesh_bounding_box_coords = mp3d_mesh->getBoundingBoxCoords();
+
+      // bounding box computation
+      bounding_box_coords[0][0] = std::min(bounding_box_coords[0][0], mesh_bounding_box_coords[0][0]);
+      bounding_box_coords[0][1] = std::min(bounding_box_coords[0][1], mesh_bounding_box_coords[0][1]);
+      bounding_box_coords[0][2] = std::min(bounding_box_coords[0][2], mesh_bounding_box_coords[0][2]);
+      
+      bounding_box_coords[1][0] = std::max(bounding_box_coords[1][0], mesh_bounding_box_coords[1][0]);
+      bounding_box_coords[1][1] = std::max(bounding_box_coords[1][1], mesh_bounding_box_coords[1][1]);
+      bounding_box_coords[1][2] = std::max(bounding_box_coords[1][2], mesh_bounding_box_coords[1][2]);
+    }
+    auto *gltfMeshData = static_cast<GltfMeshData*>(mesh.get());
+    if (gltfMeshData) {
+      valid_meshes++;
+      auto mesh_bounding_box_coords = gltfMeshData->getBoundingBoxCoords();
+
+      // bounding box computation
+      bounding_box_coords[0][0] = std::min(bounding_box_coords[0][0], mesh_bounding_box_coords[0][0]);
+      bounding_box_coords[0][1] = std::min(bounding_box_coords[0][1], mesh_bounding_box_coords[0][1]);
+      bounding_box_coords[0][2] = std::min(bounding_box_coords[0][2], mesh_bounding_box_coords[0][2]);
+      
+      bounding_box_coords[1][0] = std::max(bounding_box_coords[1][0], mesh_bounding_box_coords[1][0]);
+      bounding_box_coords[1][1] = std::max(bounding_box_coords[1][1], mesh_bounding_box_coords[1][1]);
+      bounding_box_coords[1][2] = std::max(bounding_box_coords[1][2], mesh_bounding_box_coords[1][2]);
+    }
+    std::cout << "valid meshes: " << valid_meshes << std::endl;
+    return bounding_box_coords;
+  }
+}
+
 
 Magnum::GL::AbstractShaderProgram* ResourceManager::getShaderProgram(
     ShaderType type) {

@@ -70,7 +70,10 @@ class Simulator {
   void saveFrame(const std::string& filename);
 
   std::shared_ptr<nav::ActionSpacePathFinder> makeActionPathfinder(int agentId);
-
+  std::array< std::array<float, 3>, 2> getSceneBoundingBoxCoords() {
+    return resourceManager_.getSceneBoundingBoxCoords();
+  }
+  
  protected:
   WindowlessContext context_;
   std::shared_ptr<Renderer> renderer_ = nullptr;
@@ -90,7 +93,7 @@ class Simulator {
   std::shared_ptr<scene::SemanticScene> semanticScene_ = nullptr;
 
   std::vector<std::shared_ptr<agent::Agent>> agents_;
-
+  std::array< std::array<float, 3>, 2> bounding_box_coords_;
   core::Random random_;
   SimulatorConfiguration config_;
 

@@ -57,6 +57,9 @@ class Simulator:
 
     def sample_random_agent_state(self, state_to_return):
         return self._sim.sample_random_agent_state(state_to_return)
+    
+    def get_scene_bounding_box_coords(self):
+        return self._sim.get_scene_bounding_box_coords()
 
     @property
     def pathfinder(self):
