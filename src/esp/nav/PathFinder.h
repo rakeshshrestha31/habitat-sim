@@ -22,6 +22,12 @@ class MeshData;
 }
 namespace nav {
 
+struct HitRecord {
+  vec3f hitPos;
+  vec3f hitNormal;
+  float hitDist;
+};
+
 namespace impl {
 class ActionSpaceGraph;
 class IslandSystem;
@@ -121,7 +127,8 @@ class PathFinder {
   bool findPath(ShortestPath& path);
   bool findPath(MultiGoalShortestPath& path);
 
-  vec3f tryStep(const vec3f& start, const vec3f& end);
+  vec3f tryStep(const Eigen::Ref<const vec3f> start,
+                const Eigen::Ref<const vec3f> end);
 
   bool loadNavMesh(const std::string& path);
 
@@ -134,6 +141,14 @@ class PathFinder {
   void seed(uint32_t newSeed);
 
   float islandRadius(const vec3f& pt) const;
+
+  float distanceToClosestObstacle(const vec3f& pt,
+                                  const float maxSearchRadius = 2.0) const;
+  HitRecord closestObstacleSurfacePoint(
+      const vec3f& pt,
+      const float maxSearchRadius = 2.0) const;
+
+  bool isNavigable(const vec3f& pt, const float maxYDelta = 0.5) const;
 
   friend impl::ActionSpaceGraph;
 
