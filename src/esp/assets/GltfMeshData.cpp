@@ -49,29 +49,30 @@ void GltfMeshData::setMeshData(Magnum::Trade::AbstractImporter& importer,
                                int meshID) {
   ASSERT(0 <= meshID && meshID < importer.mesh3DCount());
   meshData_ = importer.mesh3D(meshID);
-
-  // bounding box
-  bounding_box_coords_[0][0] = 
-    bounding_box_coords_[0][1] = 
-    bounding_box_coords_[0][2] = std::numeric_limits<float>::max();
-  bounding_box_coords_[1][0] = 
-    bounding_box_coords_[1][1] = 
-    bounding_box_coords_[1][2] = std::numeric_limits<float>::lowest();
-  const auto &indices = meshData_->indices();
-  for (const auto &idx: indices) {
+  
+  for (size_t idx = 0, len = meshData_->positionArrayCount(); idx < len; idx++) {
     const auto &positions = meshData_->positions(idx);
+    LOG(INFO) << "idx: " << idx << " positions: " << positions.size() << std::endl;
+    
     for (const auto &position: positions) {
-      bounding_box_coords_[0][0] = std::min(bounding_box_coords_[0][0], position.x());
-      bounding_box_coords_[0][1] = std::min(bounding_box_coords_[0][1], position.y());
-      bounding_box_coords_[0][2] = std::min(bounding_box_coords_[0][2], position.z());
+      bounding_box_coords_[0][0] = std::min({bounding_box_coords_[0][0], position.x()});
+      bounding_box_coords_[0][1] = std::min({bounding_box_coords_[0][1], position.y()});
+      bounding_box_coords_[0][2] = std::min({bounding_box_coords_[0][2], position.z()});
       
-      bounding_box_coords_[1][0] = std::max(bounding_box_coords_[1][0], position.x());
-      bounding_box_coords_[1][1] = std::max(bounding_box_coords_[1][1], position.y());
-      bounding_box_coords_[1][2] = std::max(bounding_box_coords_[1][2], position.z());
+      bounding_box_coords_[1][0] = std::max({bounding_box_coords_[1][0], position.x()});
+      bounding_box_coords_[1][1] = std::max({bounding_box_coords_[1][1], position.y()});
+      bounding_box_coords_[1][2] = std::max({bounding_box_coords_[1][2], position.z()});
     }
-    // TODO: handing indexed meshes
-    break;
   }
+
+  LOG(INFO) << "Mesh Bounding box coords: ("
+            << bounding_box_coords_[0][0] << ", " 
+            << bounding_box_coords_[0][1] << ", " 
+            << bounding_box_coords_[0][2] << "), (" 
+            << bounding_box_coords_[1][0] << ", " 
+            << bounding_box_coords_[1][1] << ", " 
+            << bounding_box_coords_[1][2] << ") "
+            << std::endl;
 }
 
 }  // namespace assets
