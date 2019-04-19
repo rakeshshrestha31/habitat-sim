@@ -105,10 +105,10 @@ void Simulator::reconfigure(const SimulatorConfiguration& cfg) {
     exit(1);
   }
   std::string navmeshFilename = io::changeExtension(sceneFilename, ".navmesh");
-  if (cfg.scene.filepaths.count("navmesh")) { // (false) { //
+  if (false) { //(cfg.scene.filepaths.count("navmesh")) { // 
     navmeshFilename = cfg.scene.filepaths.at("navmesh");
   }
-  if (io::exists(navmeshFilename)) { // (false) { //
+  if (false) { //(io::exists(navmeshFilename)) { // 
     LOG(INFO) << "Loading navmesh from " << navmeshFilename;
     pathfinder_->loadNavMesh(navmeshFilename);
     LOG(INFO) << "Loaded.";
