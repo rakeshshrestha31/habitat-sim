@@ -73,24 +73,19 @@ std::array< std::array<float, 3>, 2> ResourceManager::getSceneBoundingBoxCoords(
   for (const auto &mesh: meshes_) {
     // TODO: compute bounding boxes for other mesh types as well
     auto *mp3d_mesh = dynamic_cast<Mp3dInstanceMeshData*>(mesh.get());
+    std::array< std::array<float, 3>, 2> mesh_bounding_box_coords;
+
     if (mp3d_mesh) {
       valid_meshes++;
-      auto mesh_bounding_box_coords = mp3d_mesh->getBoundingBoxCoords();
-
-      // bounding box computation
-      bounding_box_coords[0][0] = std::min(bounding_box_coords[0][0], mesh_bounding_box_coords[0][0]);
-      bounding_box_coords[0][1] = std::min(bounding_box_coords[0][1], mesh_bounding_box_coords[0][1]);
-      bounding_box_coords[0][2] = std::min(bounding_box_coords[0][2], mesh_bounding_box_coords[0][2]);
-      
-      bounding_box_coords[1][0] = std::max(bounding_box_coords[1][0], mesh_bounding_box_coords[1][0]);
-      bounding_box_coords[1][1] = std::max(bounding_box_coords[1][1], mesh_bounding_box_coords[1][1]);
-      bounding_box_coords[1][2] = std::max(bounding_box_coords[1][2], mesh_bounding_box_coords[1][2]);
+      mesh_bounding_box_coords = mp3d_mesh->getBoundingBoxCoords();
     }
     auto *gltfMeshData = static_cast<GltfMeshData*>(mesh.get());
     if (gltfMeshData) {
       valid_meshes++;
-      auto mesh_bounding_box_coords = gltfMeshData->getBoundingBoxCoords();
-
+      mesh_bounding_box_coords = gltfMeshData->getBoundingBoxCoords();
+    }
+    
+    if (mp3d_mesh || gltfMeshData) {
       // bounding box computation
       bounding_box_coords[0][0] = std::min(bounding_box_coords[0][0], mesh_bounding_box_coords[0][0]);
       bounding_box_coords[0][1] = std::min(bounding_box_coords[0][1], mesh_bounding_box_coords[0][1]);
@@ -100,6 +95,7 @@ std::array< std::array<float, 3>, 2> ResourceManager::getSceneBoundingBoxCoords(
       bounding_box_coords[1][1] = std::max(bounding_box_coords[1][1], mesh_bounding_box_coords[1][1]);
       bounding_box_coords[1][2] = std::max(bounding_box_coords[1][2], mesh_bounding_box_coords[1][2]);
     }
+
     std::cout << "valid meshes: " << valid_meshes << std::endl;
     return bounding_box_coords;
   }
