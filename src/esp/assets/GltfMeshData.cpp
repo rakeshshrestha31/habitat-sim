@@ -10,6 +10,17 @@
 
 namespace esp {
 namespace assets {
+GltfMeshData::GltfMeshData() : BaseMesh(SupportedMeshType::GLTF_MESH) {
+  // bounding box
+  bounding_box_coords_[0][0] = std::numeric_limits<float>::max();
+  bounding_box_coords_[0][1] = std::numeric_limits<float>::max();
+  bounding_box_coords_[0][2] = std::numeric_limits<float>::max();
+  
+  bounding_box_coords_[1][0] = std::numeric_limits<float>::lowest();
+  bounding_box_coords_[1][1] = std::numeric_limits<float>::lowest();
+  bounding_box_coords_[1][2] = std::numeric_limits<float>::lowest();
+}
+
 void GltfMeshData::uploadBuffersToGPU(bool forceReload) {
   if (forceReload) {
     buffersOnGPU_ = false;

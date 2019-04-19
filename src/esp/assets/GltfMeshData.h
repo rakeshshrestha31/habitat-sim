@@ -18,7 +18,7 @@ class GltfMeshData : public BaseMesh {
   struct RenderingBuffer {
     Magnum::GL::Mesh mesh;
   };
-  GltfMeshData() : BaseMesh(SupportedMeshType::GLTF_MESH){};
+  GltfMeshData();
 
   virtual ~GltfMeshData(){};
 
