@@ -1,6 +1,7 @@
 file(GLOB_RECURSE core_SOURCES "*.cpp")
 
 find_package(Corrade REQUIRED Utility)
+add_compile_options(-std=c++14)
 
 add_library(core STATIC ${core_SOURCES})
 
