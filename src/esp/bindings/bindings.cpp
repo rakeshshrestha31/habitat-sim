@@ -7,6 +7,7 @@
 namespace py = pybind11;
 using namespace py::literals;
 
+#include "esp/agent/Agent.h"
 #include "esp/core/Configuration.h"
 #include "esp/geo/OBB.h"
 #include "esp/gfx/RenderCamera.h"
@@ -22,6 +23,7 @@ using namespace py::literals;
 #include "esp/sensor/Sensor.h"
 
 using namespace esp;
+using namespace esp::agent;
 using namespace esp::core;
 using namespace esp::geo;
 using namespace esp::gfx;
@@ -342,6 +344,20 @@ PYBIND11_MODULE(habitat_sim_bindings, m) {
       .def("getCameraMatrix", &RenderCamera::getCameraMatrix, R"(
         Get this :py:class:`Camera`'s camera matrix.
       )");
+
+  // ==== Agent (subclass of AttachedObject) ====
+  py::class_<Agent, AttachedObject, Agent::ptr>(
+      m, "Agent",
+      R"(Agent: subclass of AttachedObject.
+      The object of this class is a camera attached
+      to the scene node for rendering.)")
+      .def(py::init(&Agent::create<const AgentConfiguration&>))
+      .def(py::init(&Agent::create<const AgentConfiguration&, SceneNode&>))
+      .def("get_controls", &Agent::getControls)
+      .def("get_config",
+           py::overload_cast<>(&Agent::getConfig, py::const_));
+  // type casting
+  m.def("agent_cast", [](AttachedObject &o) { return dynamic_cast<Agent&>(o); });
 
   // ==== SceneGraph ====
   py::class_<scene::SceneGraph>(m, "SceneGraph")

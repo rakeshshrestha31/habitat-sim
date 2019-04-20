@@ -10,6 +10,7 @@ modules = [
     "SimulatorConfiguration",
     "ShortestPath",
     "MultiGoalShortestPath",
+    "ActionSpacePathFinder",
     "ActionSpaceShortestPath",
     "MultiGoalActionSpaceShortestPath",
     "ActionSpacePathLocation",
@@ -19,5 +20,7 @@ modules = [
     "Sensor",
     "SceneNode",
     "SceneGraph",
+    "Agent",
+    "agent_cast",
     "geo",
 ]
