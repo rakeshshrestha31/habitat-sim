@@ -62,10 +62,15 @@ class Simulator {
   void saveFrame(const std::string& filename);
 
   std::shared_ptr<nav::ActionSpacePathFinder> makeActionPathfinder(int agentId);
+
   std::array< std::array<float, 3>, 2> getSceneBoundingBoxCoords() {
     return resourceManager_.getSceneBoundingBoxCoords();
   }
-  
+
+  Eigen::Matrix3Xf getScenePointCloud() {
+    return resourceManager_.getScenePointCloud();
+  }
+
  protected:
   WindowlessContext context_;
   std::shared_ptr<Renderer> renderer_ = nullptr;

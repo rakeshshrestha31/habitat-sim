@@ -61,9 +61,14 @@ class ResourceManager {
   
   /** 
    * get scene bounding box (OBB)
-   * @todo handle all mesh types (currently only MP3D)
+   * @todo handle all mesh types (currently only GLTF)
    */
   std::array< std::array<float, 3>, 2> getSceneBoundingBoxCoords();
+    
+  /**
+   * get point cloud of the scene
+   */
+  Eigen::Matrix3Xf getScenePointCloud();
 
  protected:
   //! Load textures from importer into assets, and update metaData

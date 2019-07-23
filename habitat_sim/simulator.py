@@ -122,6 +122,9 @@ class Simulator:
     def get_scene_bounding_box_coords(self):
         return self._sim.get_scene_bounding_box_coords()
 
+    def get_scene_point_cloud(self):
+        return self._sim.get_scene_point_cloud()
+
     @property
     def pathfinder(self):
         return self._sim.pathfinder

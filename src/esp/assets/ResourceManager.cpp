@@ -649,5 +649,27 @@ bool ResourceManager::loadSUNCGHouseFile(const AssetInfo& houseInfo,
   return true;
 }
 
+Eigen::Matrix3Xf ResourceManager::getScenePointCloud() {
+  std::vector< Eigen::Matrix3Xf > pointClouds;
+  
+  size_t numPoints = 0;
+  for (const auto &mesh: meshes_) {
+    auto *gltfMeshData = static_cast<GltfMeshData*>(mesh.get());
+    if (gltfMeshData) {
+      pointClouds.push_back(gltfMeshData->getPointCloud());
+      numPoints += pointClouds.back().size();
+    }
+  }
+  
+  Eigen::Matrix3Xf mergedCloud(3, numPoints);
+
+  size_t pointIdx = 0;
+  for (const auto &pointCloud: pointClouds) {
+    mergedCloud.block(0, pointIdx, 3, pointIdx + pointCloud.cols()) = pointCloud;
+    pointIdx = pointIdx + pointCloud.cols();
+  }
+  return mergedCloud;
+}
+
 }  // namespace assets
 }  // namespace esp

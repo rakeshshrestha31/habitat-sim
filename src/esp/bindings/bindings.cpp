@@ -625,5 +625,6 @@ PYBIND11_MODULE(habitat_sim_bindings, m) {
       .def("seed", &Simulator::seed, R"()", "new_seed"_a)
       .def("reconfigure", &Simulator::reconfigure, R"()", "configuration"_a)
       .def("reset", &Simulator::reset, R"()")
-      .def("get_scene_bounding_box_coords", &Simulator:: getSceneBoundingBoxCoords);
+      .def("get_scene_bounding_box_coords", &Simulator::getSceneBoundingBoxCoords)
+      .def("get_scene_point_cloud", &Simulator::getScenePointCloud);
 }

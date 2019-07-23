@@ -50,11 +50,25 @@ void GltfMeshData::setMeshData(Magnum::Trade::AbstractImporter& importer,
   ASSERT(0 <= meshID && meshID < importer.mesh3DCount());
   meshData_ = importer.mesh3D(meshID);
   
+  size_t numPoints = 0;
+  for (size_t idx = 0, len = meshData_->positionArrayCount(); idx < len; idx++) {
+    const auto &positions = meshData_->positions(idx);
+    numPoints += positions.size();
+  }
+
+  pointCloud_ = Eigen::Matrix3Xf(3, numPoints);
+  size_t pointIdx = 0;
+
   for (size_t idx = 0, len = meshData_->positionArrayCount(); idx < len; idx++) {
     const auto &positions = meshData_->positions(idx);
     LOG(INFO) << "idx: " << idx << " positions: " << positions.size() << std::endl;
     
     for (const auto &position: positions) {
+      pointCloud_(0, pointIdx) = position.x();
+      pointCloud_(1, pointIdx) = position.y();
+      pointCloud_(2, pointIdx) = position.z();
+      pointIdx++;
+
       bounding_box_coords_[0][0] = std::min({bounding_box_coords_[0][0], position.x()});
       bounding_box_coords_[0][1] = std::min({bounding_box_coords_[0][1], position.y()});
       bounding_box_coords_[0][2] = std::min({bounding_box_coords_[0][2], position.z()});
